@@ -1,47 +1,113 @@
-# NASA Mars Weather MCP Server
+# NASA APIs MCP Server
 
-Bu proje, NASA InSight Weather API'sini kullanarak Mars'taki hava durumu verilerini MCP (Model Context Protocol) üzerinden sağlayan bir sunucudur.
+Bu proje, NASA'nın tüm açık API endpoint'lerini tek bir MCP (Model Context Protocol) sunucusu üzerinden sağlayan kapsamlı bir entegrasyon sistemidir.
 
-## Özellikler
+## 🚀 Özellikler
 
-- Mars'taki güncel hava durumu verilerini alır
-- Sıcaklık, basınç, rüzgar hızı ve yönü bilgilerini sağlar
-- Martian günleri (Sol) ve mevsim bilgilerini içerir
-- MCP protokolü üzerinden AI modelleri tarafından kullanılabilir
+### Desteklenen NASA API'leri:
+- **APOD** - Astronomy Picture of the Day
+- **Asteroids NeoWs** - Near Earth Object Web Service
+- **DONKI** - Space Weather Database
+- **Earth Imagery** - Landsat 8 Earth imagery
+- **EONET** - Earth Observatory Natural Event Tracker
+- **EPIC** - Earth Polychromatic Imaging Camera
+- **Exoplanet Archive** - Confirmed exoplanets database
+- **InSight Mars Weather** - Mars weather data
+- **Mars Rover Photos** - Curiosity, Opportunity, Spirit, Perseverance
+- **NASA Image Library** - Search NASA's media collection
 
-## API Verileri
+### Teknik Özellikler:
+- **Modüler Yapı** - Her API için ayrı modül
+- **Error Handling** - Kapsamlı hata yönetimi ve retry mekanizması
+- **Rate Limiting** - API limitlerini aşmamak için akıllı rate limiting
+- **Configuration** - Environment variables ile yapılandırma
+- **Logging** - Detaylı loglama sistemi
+- **MCP Uyumlu** - AI modelleri tarafından kullanılabilir
 
-NASA InSight Weather API'sinden alınan veriler:
-- **Sol**: Mars günü numarası
-- **Sıcaklık**: Minimum, maksimum ve ortalama sıcaklık (Celsius)
-- **Basınç**: Atmosferik basınç verileri (Pascal)
-- **Rüzgar Hızı**: Minimum, maksimum ve ortalama rüzgar hızı (m/s)
-- **Rüzgar Yönü**: Pusula yönü ve derece bilgisi
-- **Mevsim**: Mars'taki mevsim bilgileri
-- **Zaman**: Veri toplama periyodunun UTC zaman damgaları
+## 📊 Mevcut MCP Tools
 
-## Kurulum
+### APOD (Astronomy Picture of the Day)
+- `get_astronomy_picture_of_the_day` - Günün astronomi resmi
+- `get_apod_date_range` - Tarih aralığında APOD resimleri
+- `get_random_apod` - Rastgele APOD resimleri
 
-### Gereksinimler
+### Asteroids (Near Earth Objects)
+- `get_asteroid_feed` - Yaklaşan asteroidler
+- `get_asteroid_by_id` - Belirli asteroid detayları
+- `browse_asteroids` - Asteroid veritabanını tarama
+- `get_asteroid_statistics` - NEO istatistikleri
+
+### Mars
+- `get_mars_weather_data` - Mars hava durumu
+- `get_mars_rover_photos_by_sol` - Sol gününe göre rover fotoğrafları
+- `get_mars_rover_photos_by_date` - Tarihe göre rover fotoğrafları
+- `get_mars_rover_latest_photos` - En son rover fotoğrafları
+- `get_mars_rover_manifest` - Rover görev manifestosu
+
+### Earth
+- `get_earth_imagery` - Dünya uydu görüntüleri
+- `get_earth_assets` - Mevcut Dünya görüntü varlıkları
+
+### EPIC (Earth Polychromatic Imaging Camera)
+- `get_epic_natural_images` - Doğal renk Dünya görüntüleri
+- `get_epic_enhanced_images` - Geliştirilmiş renk Dünya görüntüleri
+
+### Natural Events
+- `get_natural_events` - Doğal afetler ve olaylar
+- `get_event_categories` - Olay kategorileri
+
+### Space Weather (DONKI)
+- `get_solar_flares` - Güneş patlamaları
+- `get_coronal_mass_ejections` - Koronal kütle atımları
+
+### Media & Exoplanets
+- `search_nasa_media` - NASA medya kütüphanesi arama
+- `get_confirmed_exoplanets` - Onaylanmış exoplanetler
+- `search_exoplanets_by_name` - İsme göre exoplanet arama
+- `get_habitable_exoplanets` - Yaşanabilir exoplanetler
+
+## 🛠️ Kurulum
+
+### 1. Gereksinimler
 ```bash
 pip install -r requirements.txt
 ```
 
-### Doğrudan Çalıştırma
+### 2. Konfigürasyon
+```bash
+# .env dosyası oluştur
+cp .env.example .env
+
+# NASA API anahtarını düzenle
+nano .env
+```
+
+### 3. Çalıştırma
+
+#### Doğrudan Çalıştırma
 ```bash
 python server.py
 ```
 
-### Docker ile Çalıştırma
+#### Docker ile Çalıştırma
 ```bash
 # Docker image oluştur
-docker build -t nasa-mars-weather-mcp .
+docker build -t nasa-apis-mcp .
 
 # Konteyner çalıştır
-docker run nasa-mars-weather-mcp
+docker run nasa-apis-mcp
 
 # Kendi API anahtarınızla çalıştır
-docker run -e NASA_API_KEY=your_api_key_here nasa-mars-weather-mcp
+docker run -e NASA_API_KEY=your_api_key_here nasa-apis-mcp
+```
+
+#### Test Etme
+```bash
+# Tüm API'leri test et
+python app.py
+
+# Konfigürasyonu kontrol et
+python -c "from config import validate_config; print(validate_config())"
 ```
 
 ## NASA API Anahtarı
@@ -97,15 +163,31 @@ result = await get_mars_weather_data(api_key="your_nasa_api_key")
 }
 ```
 
-## Dosya Yapısı
+## 📁 Proje Yapısı
 
 ```
-├── app.py              # Ana Mars hava durumu API fonksiyonu
-├── server.py           # MCP sunucu konfigürasyonu
-├── requirements.txt    # Python bağımlılıkları
-├── smithery.yaml       # MCP konfigürasyon dosyası
-├── Dockerfile         # Docker konteyner konfigürasyonu
-└── README.md          # Bu dosya
+├── nasa_apis/                    # NASA API modülleri
+│   ├── __init__.py
+│   ├── base.py                   # Base API client sınıfı
+│   ├── apod.py                   # Astronomy Picture of the Day
+│   ├── asteroids.py              # Near Earth Objects
+│   ├── donki.py                  # Space Weather Database
+│   ├── earth.py                  # Earth Imagery
+│   ├── eonet.py                  # Natural Event Tracker
+│   ├── epic.py                   # Earth Polychromatic Imaging
+│   ├── exoplanet.py              # Exoplanet Archive
+│   ├── mars_rover.py             # Mars Rover Photos
+│   ├── mars_weather.py           # Mars Weather
+│   └── nasa_library.py           # NASA Image Library
+├── app.py                        # Ana uygulama ve API manager
+├── server.py                     # MCP sunucu ve tool'lar
+├── config.py                     # Konfigürasyon yönetimi
+├── requirements.txt              # Python bağımlılıkları
+├── smithery.yaml                 # MCP konfigürasyon dosyası
+├── Dockerfile                    # Docker konteyner konfigürasyonu
+├── .env.example                  # Environment variables örneği
+├── nasa_api_endpoints.md         # API endpoint dokümantasyonu
+└── README.md                     # Bu dosya
 ```
 
 ## Notlar

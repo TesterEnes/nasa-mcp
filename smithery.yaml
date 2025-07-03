@@ -4,12 +4,43 @@ startCommand:
     # JSON Schema defining the configuration options for the MCP.
     type: object
     properties:
-      api_key:
+      nasa_api_key:
         type: string
-        description: "NASA API key for accessing InSight Weather data"
+        description: "NASA API key for accessing all NASA APIs"
         default: "DEMO_KEY"
+      rate_limit_rpm:
+        type: integer
+        description: "Rate limit requests per minute"
+        default: 60
+      request_timeout:
+        type: integer
+        description: "Request timeout in seconds"
+        default: 30
+      enable_cache:
+        type: boolean
+        description: "Enable response caching"
+        default: false
+      log_level:
+        type: string
+        description: "Logging level"
+        default: "INFO"
+        enum: ["DEBUG", "INFO", "WARNING", "ERROR"]
   commandFunction:
     |-
-    (config) => ({ command: 'python', args: ['-m', 'server'] })
+    (config) => ({
+      command: 'python',
+      args: ['-m', 'server'],
+      env: {
+        NASA_API_KEY: config.nasa_api_key || 'DEMO_KEY',
+        RATE_LIMIT_RPM: config.rate_limit_rpm || '60',
+        REQUEST_TIMEOUT: config.request_timeout || '30',
+        ENABLE_CACHE: config.enable_cache || 'false',
+        LOG_LEVEL: config.log_level || 'INFO'
+      }
+    })
   exampleConfig:
-    api_key: "DEMO_KEY"
+    nasa_api_key: "DEMO_KEY"
+    rate_limit_rpm: 60
+    request_timeout: 30
+    enable_cache: false
+    log_level: "INFO"
