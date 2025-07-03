@@ -1,0 +1,15 @@
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    properties:
+      api_key:
+        type: string
+        description: "NASA API key for accessing InSight Weather data"
+        default: "DEMO_KEY"
+  commandFunction:
+    |-
+    (config) => ({ command: 'python', args: ['-m', 'server'] })
+  exampleConfig:
+    api_key: "DEMO_KEY"
